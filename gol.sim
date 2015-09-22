@@ -1,7 +1,4 @@
-
-
-
-Class Coordenada (x,y); integer x,y;
+class Coordenada (x,y); integer x,y;
 begin
     
     integer procedure getX;
@@ -25,14 +22,15 @@ begin
             OutImage;
     end of printCoord;
     
-end of Coordenada;
+end Coordenada;
 
-Class Tablero(filas, columnas, coordenadas, m); integer filas,columnas,m; Ref(Coordenada) coordenadas(0:m); //<- esto no le gusta al parser, no se por qué
+class Tablero(filas, columnas, coordenadas, m); integer filas,columnas,m; ref(Coordenada) array coordenadas; !<- esto no le gusta al parser, no se por que;
 begin
-    boolean array board(0:filas,0:columnas), oldBoard(0:filas,0:columnas);  
-    Procedure Initialize;  //arma el tablero con todas las culas muertas, las vivas las pone en true en funcin de las coordenadas pasadas
+    Boolean array board(0:filas,0:columnas), oldBoard(0:filas,0:columnas);  
+    procedure Initialize;  
+! arma el tablero con todas las culas muertas, las vivas las pone en true en funcin de las coordenadas pasadas;
     begin
-        Ref(Coordenada) coord;
+        ref(Coordenada) coord;
         integer i,j,k,n;
         i:=0;
         j:=0;
@@ -53,63 +51,44 @@ begin
 			oldBoard(i,j):= false;		
         end for;      
             
-    End of Initialize;
+    end Initialize;
 	
-	Procedure Evolve; 
+    procedure Evolve; 
 	begin
 	integer i,j,k,n,vecinos;
         i:=0;
         j:=0;
             
         while (i < filas) do begin
-            while j < columnas do begin
-				contarVecinosVivos(oldBoard, filas, columnas,i,j,vecinos);
-				oldBoard(i,j) := board(i,j);
-				if (board(i,j) = 1) then
-				begin
-					if (vecinos < 2) then
-						board(i,j):=0 
-					else
-						if (vecinos <= 3) then
-							board(i,j):=1
-						else 
-							board(i,j):=0;				
-					end if;
-				else
-					if (vecinos = 3) then tablero[i,j]:=1;
-				
-				j:=j+1;
-            End While;
+            while (j < columnas) do begin
+		vecinos:= ContarVecinosVivos(i,j);
+		oldBoard(i,j):= board(i,j);
+                if (vecinos = 2) then board(i,j):= board(i,j)
+                else if (vecinos = 3) then board(i,j):= true 
+                else board(i,j):= false; 
+		j:= j+1;
+            end while;
             i:=i+1;
-        End While;
+        end while;
 	
-	end of Evolve;
+    end Evolve;
 	
-procedure contarVecinosVivos (oldBoard, filas,columnas, x,y, vecinos);
+integer procedure ContarVecinosVivos (x,y);integer x,y;
 begin
-	boolean esVecino;
-	integer i,j;
+	Boolean esVecino;
+	integer i,j,vecinos;
 	vecinos := 0;
 	for i:=(x-1) step 1 until (x+1) do
 	begin
 		for j:=(y-1) step 1 until (y+1) do
 		begin
 			esVecino := ((i>=0) and (j>=0) and (i<filas) and (j<columnas) and ((x <> i) or (y <> j)));
-			if  esVecino then
-				begin
-					if (board(i,j) = 1) then vecinos := vecinos +1
-				end if;
-		
+			if ( esVecino and board(i,j)) then vecinos := vecinos + 1
 		end for;
 	end for;
-	
+        ContarVecinosVivos:= vecinos;
+end ContarVecinosVivos;
 
-end;
-Initialize;
-
-End of Tablero;
+end Tablero;
 
 
-
-
-end;
