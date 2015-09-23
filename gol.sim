@@ -1,3 +1,5 @@
+begin 
+
 class Coordenada (x,y); integer x,y;
 begin
     
@@ -27,6 +29,8 @@ end Coordenada;
 class Tablero(filas, columnas, coordenadas, m); integer filas,columnas,m; ref(Coordenada) array coordenadas; !<- esto no le gusta al parser, no se por que;
 begin
     Boolean array board(0:filas,0:columnas), oldBoard(0:filas,0:columnas);  
+
+
     procedure Initialize;  
 ! arma el tablero con todas las culas muertas, las vivas las pone en true en funcin de las coordenadas pasadas;
     begin
@@ -89,6 +93,41 @@ begin
         ContarVecinosVivos:= vecinos;
 end ContarVecinosVivos;
 
+Procedure OutTablero;
+begin
+
+integer i,j;
+i := 0;
+j :=0;
+
+while (i < 2) do begin
+    while (j< 2) do begin
+        if board(i,j) then
+            OutInt(1,1)
+        else
+            OutInt(0,1);
+        
+        j:=j+1;
+    end while;
+    OutText(" ");
+end while;
+    
+end OutTablero;
+
+Initialize;
 end Tablero;
 
 
+
+ref(Coordenada) array coords(0:3);
+ref(Tablero) newTablero;
+
+coords(1) :- New Coordenada(0,1);
+coords(2) :- New Coordenada(1,1);
+coords(3) :- New Coordenada(2,1);
+
+newTablero :- New Tablero(3,3,coords,3);
+newTablero.Initialize;
+newTablero.OutTablero;
+
+end;
